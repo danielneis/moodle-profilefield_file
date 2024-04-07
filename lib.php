@@ -22,10 +22,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-defined('PROFILE_VISIBLE_ALL') || define ('PROFILE_VISIBLE_ALL',     '2'); // Only visible for users with moodle/user:update capability.
-defined('PROFILE_VISIBLE_PRIVATE') || define ('PROFILE_VISIBLE_PRIVATE', '1'); // Either we are viewing our own profile or we have moodle/user:update capability.
-defined('PROFILE_VISIBLE_NONE') || define ('PROFILE_VISIBLE_NONE',    '0'); // Only visible for moodle/user:update capability.
-
 function profilefield_file_pluginfile($course, $cm, context $context, $filearea, $args, $forcedownload) {
     global $DB, $USER;
 
