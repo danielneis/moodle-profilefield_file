@@ -89,25 +89,6 @@ class profile_field_file extends profile_field_base {
     }
 
     /**
-     * Sets the default data for the field in the form object
-     * @param  moodleform $mform instance of the moodleform class
-     */
-    public function edit_field_set_default($mform) {
-        if ($this->userid && ($this->userid !== -1)) {
-            $filemanagercontext = context_user::instance($this->userid);
-        } else {
-            $filemanagercontext = context_system::instance();
-        }
-
-        $draftitemid = file_get_submitted_draft_itemid($this->inputname);
-        file_prepare_draft_area($draftitemid, $filemanagercontext->id, 'profilefield_file', "files_{$this->fieldid}", 0, $this->get_filemanageroptions());
-        $mform->setDefault($this->inputname, $draftitemid);
-        $this->data = $draftitemid;
-
-        parent::edit_field_set_default($mform);
-    }
-
-    /**
      * Just remove the field element if locked.
      * @param moodleform $mform instance of the moodleform class
      * @todo improve this
@@ -128,9 +109,9 @@ class profile_field_file extends profile_field_base {
      * @return  mixed
      */
     public function edit_save_data_preprocess($data, $datarecord) {
-        return 0;  // we set it to zero because this value is actually redaundant
-                    // it cannot be set to null or an empty string either because the field's
-                    // value will not be shown on user's profile.
+        $info = file_get_draft_area_info($data);
+        // We do need to have a value otherwise the file will not be shown on user's profile.
+        return ($info['filecount'] > 0) ? '1' : '';
     }
 
     /**
@@ -139,9 +120,16 @@ class profile_field_file extends profile_field_base {
      * @param stdClass $user a user object
      */
     public function edit_load_user_data($user) {
-        $user->{$this->inputname} = null;   // it should be set to null, otherwise the loaded files will
-                                            // get manipulated when $userform->set_data($user) is called
-                                            // later in user/edit.php or user/editadvanced.php
+        if ($this->userid && ($this->userid !== -1)) {
+            $filemanagercontext = context_user::instance($this->userid);
+        } else {
+            $filemanagercontext = context_system::instance();
+        }
+
+        $draftitemid = file_get_submitted_draft_itemid($this->inputname);
+        file_prepare_draft_area($draftitemid, $filemanagercontext->id, 'profilefield_file', "files_{$this->fieldid}", 0, $this->get_filemanageroptions());
+
+        $user->{$this->inputname} = $draftitemid;
     }
 
     private function get_filemanageroptions() {
