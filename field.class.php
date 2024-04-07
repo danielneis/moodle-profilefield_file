@@ -29,13 +29,18 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class profile_field_file extends profile_field_base {
-
     /**
      * Add fields for editing a file profile field.
-     * @param moodleform $mform
+     * @param MoodleQuickForm $mform instance of the moodleform class
      */
     public function edit_field_add($mform) {
-        $mform->addElement('filemanager', $this->inputname, format_string($this->field->name), null, $this->get_filemanageroptions());
+        $mform->addElement(
+            'filemanager',
+            $this->inputname,
+            format_string($this->field->name),
+            null,
+            $this->get_filemanageroptions()
+        );
     }
 
     /**
@@ -50,12 +55,16 @@ class profile_field_file extends profile_field_base {
         $fs = get_file_storage();
 
         $dir = $fs->get_area_tree($context->id, 'profilefield_file', "files_{$this->fieldid}", 0);
-        $files = $fs->get_area_files($context->id, 'profilefield_file', "files_{$this->fieldid}",
-                                     0,
-                                     'timemodified',
-                                     false);
+        $files = $fs->get_area_files(
+            $context->id,
+            'profilefield_file',
+            "files_{$this->fieldid}",
+            0,
+            'timemodified',
+            false
+        );
 
-        $data = array();
+        $data = [];
 
         foreach ($files as $file) {
             $path = '/' . $context->id . '/profilefield_file/files_' . $this->fieldid . '/' .
@@ -75,7 +84,6 @@ class profile_field_file extends profile_field_base {
     /**
      * Saves the data coming from form
      * @param stdClass $usernew data coming from the form
-     * @return mixed returns data id if success of db insert/update, false on fail, 0 if not permitted
      */
     public function edit_save_data($usernew) {
         if (!isset($usernew->{$this->inputname})) {
@@ -84,20 +92,27 @@ class profile_field_file extends profile_field_base {
         }
 
         $usercontext = context_user::instance($this->userid, MUST_EXIST);
-        file_save_draft_area_files($usernew->{$this->inputname}, $usercontext->id, 'profilefield_file', "files_{$this->fieldid}", 0, $this->get_filemanageroptions());
+        file_save_draft_area_files(
+            $usernew->{$this->inputname},
+            $usercontext->id,
+            'profilefield_file',
+            "files_{$this->fieldid}",
+            0,
+            $this->get_filemanageroptions()
+        );
         parent::edit_save_data($usernew);
     }
 
     /**
      * Just remove the field element if locked.
-     * @param moodleform $mform instance of the moodleform class
+     * @param MoodleQuickForm $mform instance of the moodleform class
      * @todo improve this
      */
     public function edit_field_set_locked($mform) {
         if (!$mform->elementExists($this->inputname)) {
             return;
         }
-        if ($this->is_locked() and !has_capability('moodle/user:update', context_system::instance())) {
+        if ($this->is_locked() && !has_capability('moodle/user:update', context_system::instance())) {
             $mform->removeElement($this->inputname);
         }
     }
@@ -127,17 +142,28 @@ class profile_field_file extends profile_field_base {
         }
 
         $draftitemid = file_get_submitted_draft_itemid($this->inputname);
-        file_prepare_draft_area($draftitemid, $filemanagercontext->id, 'profilefield_file', "files_{$this->fieldid}", 0, $this->get_filemanageroptions());
+        file_prepare_draft_area(
+            $draftitemid,
+            $filemanagercontext->id,
+            'profilefield_file',
+            "files_{$this->fieldid}",
+            0,
+            $this->get_filemanageroptions()
+        );
 
         $user->{$this->inputname} = $draftitemid;
     }
 
+    /**
+     * Returns the options of the file manager
+     * @return array an array of setting values
+     */
     private function get_filemanageroptions() {
-        return array(
+        return [
             'maxfiles' => $this->field->param1,
             'maxbytes' => $this->field->param2,
             'subdirs' => 0,
-            'accepted_types' => '*'
-        );
+            'accepted_types' => '*',
+        ];
     }
 }

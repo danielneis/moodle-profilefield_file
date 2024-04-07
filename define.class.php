@@ -31,11 +31,6 @@ define('PROFILEFIELD_FILE_MAXFILES', 20);
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class profile_define_file extends profile_define_base {
-
-    /**
-     * Add elements for creating/editing a file profile field.
-     * @param moodleform $form
-     */
     public function define_form_specific($form) {
         global $CFG;
 
@@ -45,7 +40,7 @@ class profile_define_file extends profile_define_base {
 
         // Param 1 for file type is the maxfiles of the field.
         // Let's prepare the maxfiles popup.
-        $options = array();
+        $options = [];
         for ($i = 1; $i <= PROFILEFIELD_FILE_MAXFILES; $i++) {
             $options[$i] = $i;
         }
@@ -61,10 +56,6 @@ class profile_define_file extends profile_define_base {
         $form->setType('param2', PARAM_INT);
     }
 
-    /**
-     * Alter form based on submitted or existing data
-     * @param moodleform $mform
-     */
     public function define_after_data(&$mform) {
         $mform->addHelpButton('forceunique', 'forceunique', 'profilefield_file');
         $mform->getElement('forceunique')->setValue('0');

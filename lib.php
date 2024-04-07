@@ -15,13 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * File profile field lib.
+ *
  * @package    profilefield_file
  * @copyright  2014 onwards Shamim Rezaie {@link http://foodle.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Serve the files from the profilefield_file file areas
+ *
+ * @param stdClass $course the course object
+ * @param stdClass $cm the course module object
+ * @param context $context the context
+ * @param string $filearea the name of the file area
+ * @param array $args extra arguments (itemid, path)
+ * @param bool $forcedownload whether or not force download
+ * @return false|void
+ */
 function profilefield_file_pluginfile($course, $cm, context $context, $filearea, $args, $forcedownload) {
     global $DB, $USER;
 
@@ -35,7 +46,7 @@ function profilefield_file_pluginfile($course, $cm, context $context, $filearea,
     require_login($course, false, $cm);
 
     $fieldid = substr($filearea, strlen('files_'));
-    $field = $DB->get_record('user_info_field', array('id' => $fieldid));
+    $field = $DB->get_record('user_info_field', ['id' => $fieldid]);
 
     // If is allowed to see.
     if ($field->visible != PROFILE_VISIBLE_ALL) {
@@ -50,7 +61,7 @@ function profilefield_file_pluginfile($course, $cm, context $context, $filearea,
         }
     }
 
-    array_shift($args); // ignore revision - designed to prevent caching problems only
+    array_shift($args); // Ignore revision - designed to prevent caching problems only.
 
     $relativepath = implode('/', $args);
     $fullpath = "/{$context->id}/profilefield_file/$filearea/0/$relativepath";
