@@ -47,7 +47,7 @@ class upload {
         while (false !== ($item = readdir($handle))) {
             if ($item != '.' && $item != '..') {
                 if (is_dir($dir.'/'.$item)) {
-                    process_directory($dir.'/'.$item, $userfield, $filefield, $overwrite, $results);
+                    self::process_directory($dir.'/'.$item, $userfield, $filefield, $overwrite, $results);
                 } else if (is_file($dir.'/'.$item))  {
                     $result = self::process_file($dir.'/'.$item, $userfield, $filefield, $overwrite);
                     switch ($result) {
