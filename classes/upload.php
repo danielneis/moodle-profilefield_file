@@ -131,7 +131,10 @@ class upload {
         }
 
         $infodata = ['fieldid' => $filefield, 'userid' => $user->id];
-        if (!$DB->record_exists('user_info_data', $infodata)) {
+        if ($inforecord = $DB->get_record('user_info_data', $infodata)) {
+            $inforecord->data = 1;
+            $DB->update_record('user_info_data', $inforecord);
+        } else {
             $infodata['data'] = 1;
             $DB->insert_record('user_info_data', $infodata);
         }
